@@ -2,6 +2,7 @@ from gtts import gTTS
 from pydub import AudioSegment
 import urllib.request
 import sys, os
+import argparse
 
 quran_surahs = {
     1:  {"nama": "Al-Fatihah", "jumlah_ayat": 7},
@@ -207,9 +208,11 @@ def cek_ayat_valid(input_str):
 
     except (ValueError, AttributeError):
         return "❌ Error: Format input harus 'nomor_surat:nomor_ayat', misalnya 20:30"
-    
-if __name__ == "__main__":
+
+def satuan():
     suratayat = input("Masukkan surat:ayat :")
+    if not suratayat:
+        sys.exit(1)
     surat_num, ayat_num = map(int, suratayat.split(':'))
     
     print(cek_ayat_valid(suratayat))
@@ -224,5 +227,30 @@ if __name__ == "__main__":
     gabung_mp3(daftar_file, f'./temp/_{format_surah_ayat(suratayat)}.mp3')
     os.startfile(f'H:/PYTHON/dl_ayat/temp/_{format_surah_ayat(suratayat)}.mp3')
     
+def main():
+    parser = argparse.ArgumentParser(description="Format ayat Al-Quran menjadi Audio.")
+    group = parser.add_mutually_exclusive_group()
+
+    group.add_argument('--ayat', type=str, help="Satu ayat dalam format SURAT:AYAT (misal 21:32)")
+    group.add_argument('--list', nargs='+', help="Daftar beberapa ayat, pisahkan dengan spasi (misal: 2:255 3:7)")
+    group.add_argument('--file', type=str, help="File .txt dengan daftar ayat per baris (misal: daftar.txt)")
+
+    parser.add_argument('--output', type=str, default="kode_ayat.txt", help="Nama file output")
+
+    args = parser.parse_args()
+
+    if any(vars(args).values()):
+        while True:
+            satuan()
+        sys.exit(1)
+    else:
+        if args.ayat:
+            print("Ayat nih")
+        if args.file:
+            print("File")
+    
+    
+if __name__ == "__main__":
+    main()
     
     
